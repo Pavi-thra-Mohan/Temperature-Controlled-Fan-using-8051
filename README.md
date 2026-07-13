@@ -32,18 +32,18 @@ An embedded systems project featuring an automated climate control system built 
 
 ---
 
-## 📊 System Logic & Threshold Zones
+##  System Logic & Threshold Zones
 
 The core control unit monitors incoming analog-to-digital (ADC) values and segments system responses into specific temperature boundaries:
 
-| Temperature Range | System State | Hardware Action | LCD Display Line 1 | LCD Display Line 2 |
+| Temperature Range | System State | Hardware Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **$< 10^{\circ}\text{C}$** | Critical Heating (Max) | Heaters 1 & 2 **ON** (`0`), Fan **OFF** (`1`) | `TEMPR: [XX] C` | `HTRON  HEAT:LVL2` |
-| **$10^{\circ}\text{C}$ to $19^{\circ}\text{C}$** | Mild Heating (Low) | Heater 1 **ON** (`0`), Heater 2 & Fan **OFF** (`1`) | `TEMPR: [XX] C` | `HTRON  HEAT:LVL1` |
-| **$20^{\circ}\text{C}$ to $24^{\circ}\text{C}$** | Room Equilibrium | Heaters 1 & 2 **OFF** (`1`), Fan **OFF** (`1`) | `TEMPR: [XX] C NORM.`| `FAN,HTR OFF` |
-| **$25^{\circ}\text{C}$ to $29^{\circ}\text{C}$** | Cooling Level 1 | Heaters **OFF** (`1`), Fan **PWM 50% Duty Cycle** | `TEMPR: [XX] C FANON`| `SPEED:LEVEL 1` |
-| **$30^{\circ}\text{C}$ to $34^{\circ}\text{C}$** | Cooling Level 2 | Heaters **OFF** (`1`), Fan **PWM 75% Duty Cycle** | `TEMPR: [XX] C FANON`| `SPEED:LEVEL 2` |
-| **$\ge 35^{\circ}\text{C}$** | Critical Cooling (Max) | Heaters **OFF** (`1`), Fan **ON Max Continuous** (`0`) | `TEMPR: [XX] C FANON`| `SPEED:LEVEL 3` |
+| **$< 10^{\circ}\text{C}$** | Critical Heating (Max) | Heaters 1 & 2 **ON** (`0`), Fan **OFF** (`1`) | 
+| **$10^{\circ}\text{C}$ to $19^{\circ}\text{C}$** | Mild Heating (Low) | Heater 1 **ON** (`0`), Heater 2 & Fan **OFF** (`1`) | 
+| **$20^{\circ}\text{C}$ to $24^{\circ}\text{C}$** | Room Equilibrium | Heaters 1 & 2 **OFF** (`1`), Fan **OFF** (`1`) | 
+| **$25^{\circ}\text{C}$ to $29^{\circ}\text{C}$** | Cooling Level 1 | Heaters **OFF** (`1`), Fan **PWM 50% Duty Cycle** | 
+| **$30^{\circ}\text{C}$ to $34^{\circ}\text{C}$** | Cooling Level 2 | Heaters **OFF** (`1`), Fan **PWM 75% Duty Cycle** | 
+| **$\ge 35^{\circ}\text{C}$** | Critical Cooling (Max) | Heaters **OFF** (`1`), Fan **ON Max Continuous** (`0`) | 
 
 > ⚠️ **Note on Logic Polarity:** The heater pins (`HTR1`, `HTR2`) and the fan driver pin (`MTR`) operate on **Active-Low** logic based on the code design. Writing a `0` turns the component ON, while writing a `1` turns it OFF.
 
