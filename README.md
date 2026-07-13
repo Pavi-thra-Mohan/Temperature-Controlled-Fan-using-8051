@@ -2,11 +2,11 @@
 
 An embedded systems project featuring an automated climate control system built using the **8051 Microcontroller (AT89C51/AT89S52)**. The system dynamically reads real-time temperature data from an analog sensor (**LM35**) via an **ADC0804**, displays the readings and device statuses on a **16x2 LCD**, and intelligently triggers a multi-stage cooling fan or heater based on defined temperature zones.
 
-This project was developed as part of the Micro Project requirements for the Computer Architecture and Microcontrollers course at **Mar Athanasius College of Engineering, Kothamangalam**.
+
 
 ---
 
-## 🚀 Features
+##  Features
 
 *   **Automated Climate Regulation:** Implements full automation across 5 distinct temperature bands (Heating, Normal, and Cooling states).
 *   **Multi-Stage Speed & Heat Intensity:** 
@@ -17,7 +17,7 @@ This project was developed as part of the Micro Project requirements for the Com
 
 ---
 
-## 🛠️ Hardware Specifications & Pin Configuration
+##  Hardware Specifications & Pin Configuration
 
 | Component / Interface | Hardware Pin / Port | Purpose |
 | :--- | :--- | :--- |
@@ -30,6 +30,42 @@ This project was developed as part of the Micro Project requirements for the Com
 
 ---
 
-## 📊 System Logic & Threshold Zones
+##  System Logic & Threshold Zones
 
 The core control unit monitors incoming ADC variables and strictly segments behavior into the following thresholds:
+[0°C] ----------- [10°C] ----------- [20°C] ----------- [25°C] ----------- [30°C] ----------- [35°C] --->
+  |    HEATER 2     |    HEATER 1     |     SYSTEM    |    FAN SPEED    |    FAN SPEED    |   FAN SPEED   
+  |    (MAX HEAT)   |   (LOW HEAT)    |   IDLE/NORM   |    (LEVEL 1)    |    (LEVEL 2)    |   (LEVEL 3)
+
+  ### Detailed Breakdown
+*   **Critical Heating Zone ($< 10^{\circ}\text{C}$):** Both Heater Stage 1 and Stage 2 are enabled (`HTR1 = 0`, `HTR2 = 0` active low) to reach ambient levels swiftly. LCD prints `HEAT:LEVEL 2`.
+*   **Mild Heating Zone ($10^{\circ}\text{C}$ to $19^{\circ}\text{C}$):** Low heat state where only Heater Stage 1 operates. LCD prints `HEAT:LEVEL 1`.
+*   **Normal Room Zone ($20^{\circ}\text{C}$ to $24^{\circ}\text{C}$):** Equilibrium state. Both heaters and the fan are kept **OFF**. LCD prints `NORM.` on line 1 and `FAN,HTR OFF` on line 2.
+*   **Cooling Zone 1 ($25^{\circ}\text{C}$ to $29^{\circ}\text{C}$):** Low Fan Speed activated using a 50% duty cycle delay profile. LCD prints `SPEED:LEVEL 1`.
+*   **Cooling Zone 2 ($30^{\circ}\text{C}$ to $34^{\circ}\text{C}$):** Medium Fan Speed activated using an optimized 75% duty cycle pulse profile. LCD prints `SPEED:LEVEL 2`.
+*   **Critical Cooling Zone ($\ge 35^{\circ}\text{C}$):** Maximum Fan Speed mode (`MTR = 0` continuous low draw). LCD prints `SPEED:LEVEL 3`.
+
+---
+
+## 💻 Software Architecture
+
+The source code is modularized into distinct blocks for clean readability and maintenance:
+*   `lcdInit()` / `lcdCmd()` / `lcdData()`: Handles the low-level 8-bit handshake sequence and clears busy flags safely before printing text.
+*   `adcRead()`: Pulses the `WR` line to initiate conversion, polls the active-low interrupt pin (`INTR`), and captures raw data through port 3 (`P3`).
+*   `convert()` / `update()`: Parses raw bytes mathematically, scales the value into single and tens digits, converts them to printable ASCII hex string masks (`0x30`), and maps them directly to LCD coordinates.
+*   `motorcontrol()`: The centralized infinite execution loop (`while(1)`) running state machines that adjust peripheral pin outputs synchronously with ADC fluctuations.
+
+---
+
+## ⚙️ How to Compile & Flash
+
+### Prerequisites
+*   **IDE:** Keil uVision (with C51 compiler options).
+*   **Flashing Utility / Simulation:** ISP Programmer (e.g., Willar or PROISP) if using a physical chip, or **Proteus VSM** for schematic simulation.
+
+### Execution Steps
+1. Create a new project in Keil uVision targeting the **AT89C51** or **AT89S52** device database.
+2. Add the `code.c` file to your target Source Group.
+3. Open Project Options $\rightarrow$ **Output** tab $\rightarrow$ Check **"Create HEX File"**.
+4. Click **Build Target (F7)** to compile the code and generate the standard production `.hex` binary string file.
+5. Upload the compiled `.hex` file directly to your microcontroller flash memory or point to it in your Proteus schematic design for simulation.
