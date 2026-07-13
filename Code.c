@@ -1,5 +1,4 @@
-#include<reg51.h> /*Instructing Preprocessor to add header file reg51.h to use the features of
-8051 C Programming*/
+#include<reg51.h> 
 #define MYDATA P3 /*Defining Port 3 as "MYDATA" Function:To input the digital data from
 ADC*/
 #define ldata P1 /*Defining Port 1 as data pins for lcd as ldata,Function:To output data to
